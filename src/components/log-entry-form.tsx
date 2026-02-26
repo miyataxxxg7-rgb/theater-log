@@ -7,7 +7,8 @@ export function LogEntryForm() {
     const [rating, setRating] = useState(0);
 
     return (
-        <form className="space-y-6 max-w-xl mx-auto p-6">
+        {/* 🌟 ここにスクロールの魔法を追加しました！ 🌟 */ }
+        < form className = "space-y-6 max-w-xl mx-auto p-6 max-h-[75vh] overflow-y-auto" >
             <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-300">タイトル</label>
                 <input
@@ -99,6 +100,6 @@ export function LogEntryForm() {
             >
                 保存する
             </button>
-        </form>
+        </form >
     );
 }
