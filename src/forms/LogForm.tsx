@@ -52,16 +52,20 @@ export function LogForm({ seatId, initialData, onSave, onCancel }: LogFormProps)
     };
 
     return (
-        <form onSubmit={handleSubmit} className="relative flex flex-col h-full bg-white text-pencil">
+        <form onSubmit={handleSubmit} className="relative flex flex-col h-full bg-white text-pencil max-h-[85vh]">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-pencil/10">
+            <div className="flex items-center justify-between p-4 border-b border-pencil/10 shrink-0">
                 <h3 className="font-bold text-lg">観劇ログ入力</h3>
                 <button type="button" onClick={onCancel} className="p-2 hover:bg-black/5 rounded-full">
                     <X className="w-6 h-6" />
                 </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {/* 🌟 ここが超強力なスクロール魔法です！ 🌟 */}
+            <div
+                className="flex-1 overflow-y-auto overscroll-contain p-6 space-y-6 touch-pan-y"
+                style={{ WebkitOverflowScrolling: 'touch' }}
+            >
                 {/* 演目名 */}
                 <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm font-bold text-pencil-light">
@@ -214,7 +218,7 @@ export function LogForm({ seatId, initialData, onSave, onCancel }: LogFormProps)
             </div>
 
             {/* 保存ボタン */}
-            <div className="p-4 border-t border-pencil/10 bg-paper/50">
+            <div className="p-4 border-t border-pencil/10 bg-white shrink-0">
                 <button
                     type="submit"
                     className="w-full bg-[#ffc0cb] text-pencil font-bold py-3 rounded-xl shadow-lg hover:opacity-90 transition-all active:scale-[0.98]"
