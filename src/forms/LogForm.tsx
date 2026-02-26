@@ -53,60 +53,60 @@ export function LogForm({ seatId, initialData, onSave, onCancel }: LogFormProps)
 
     return (
         <form onSubmit={handleSubmit} className="relative flex flex-col h-full bg-white text-pencil max-h-[85vh]">
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-pencil/10 shrink-0">
-                <h3 className="font-bold text-lg">観劇ログ入力</h3>
-                <button type="button" onClick={onCancel} className="p-2 hover:bg-black/5 rounded-full">
-                    <X className="w-6 h-6" />
+            {/* Header: 余白を小さくしました */}
+            <div className="flex items-center justify-between p-3 border-b border-pencil/10 shrink-0">
+                <h3 className="font-bold text-base">観劇ログ入力</h3>
+                <button type="button" onClick={onCancel} className="p-1.5 hover:bg-black/5 rounded-full">
+                    <X className="w-5 h-5" />
                 </button>
             </div>
 
-            {/* 🌟 ここが超強力なスクロール魔法です！ 🌟 */}
+            {/* Main content: 隙間と余白をキュッと詰めました */}
             <div
-                className="flex-1 overflow-y-auto overscroll-contain p-6 space-y-6 touch-pan-y"
+                className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-4 touch-pan-y"
                 style={{ WebkitOverflowScrolling: 'touch' }}
             >
                 {/* 演目名 */}
-                <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-bold text-pencil-light">
-                        <BookOpen className="w-4 h-4" /> 演目
+                <div className="space-y-1.5">
+                    <label className="flex items-center gap-1.5 text-xs font-bold text-pencil-light">
+                        <BookOpen className="w-3.5 h-3.5" /> 演目
                     </label>
                     <input
                         type="text"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="公演名を入力"
-                        className="w-full bg-[#f5f5f5] border border-pencil/20 rounded-lg p-3 focus:ring-2 focus:ring-oshi focus:border-transparent outline-none transition-all placeholder:text-pencil-light/50"
+                        className="w-full bg-[#f5f5f5] border border-pencil/20 rounded-md p-2 text-sm focus:ring-2 focus:ring-oshi focus:border-transparent outline-none transition-all placeholder:text-pencil-light/50"
                         required
                     />
                 </div>
 
                 {/* 日付 */}
-                <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-bold text-pencil-light">
-                        <Calendar className="w-4 h-4" /> 日付
+                <div className="space-y-1.5">
+                    <label className="flex items-center gap-1.5 text-xs font-bold text-pencil-light">
+                        <Calendar className="w-3.5 h-3.5" /> 日付
                     </label>
                     <input
                         type="date"
                         value={date}
                         onChange={(e) => setDate(e.target.value)}
-                        className="w-full bg-[#f5f5f5] border border-pencil/20 rounded-lg p-3 focus:ring-2 focus:ring-oshi outline-none transition-all"
+                        className="w-full bg-[#f5f5f5] border border-pencil/20 rounded-md p-2 text-sm focus:ring-2 focus:ring-oshi outline-none transition-all"
                         required
                     />
                 </div>
 
                 {/* 開演時間 / マチネ・ソワレ選択 */}
-                <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-bold text-pencil-light">
-                        <Clock className="w-4 h-4" /> 開演時間
+                <div className="space-y-1.5">
+                    <label className="flex items-center gap-1.5 text-xs font-bold text-pencil-light">
+                        <Clock className="w-3.5 h-3.5" /> 開演時間
                     </label>
 
-                    {/* マチネ・ソワレボタン */}
-                    <div className="flex gap-2 mb-2">
+                    {/* マチネ・ソワレボタン: ボタンの高さを少し細くしました */}
+                    <div className="flex gap-2 mb-1">
                         <button
                             type="button"
                             onClick={() => setTimeType('matinee')}
-                            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${timeType === 'matinee'
+                            className={`flex-1 py-1.5 px-2 rounded-md text-sm font-medium transition-all ${timeType === 'matinee'
                                 ? 'bg-[#ffc0cb] text-pencil'
                                 : 'bg-[#f5f5f5] border border-pencil/20 text-pencil hover:border-[#ffc0cb]'
                                 }`}
@@ -116,7 +116,7 @@ export function LogForm({ seatId, initialData, onSave, onCancel }: LogFormProps)
                         <button
                             type="button"
                             onClick={() => setTimeType('soiree')}
-                            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${timeType === 'soiree'
+                            className={`flex-1 py-1.5 px-2 rounded-md text-sm font-medium transition-all ${timeType === 'soiree'
                                 ? 'bg-[#ffc0cb] text-pencil'
                                 : 'bg-[#f5f5f5] border border-pencil/20 text-pencil hover:border-[#ffc0cb]'
                                 }`}
@@ -126,7 +126,7 @@ export function LogForm({ seatId, initialData, onSave, onCancel }: LogFormProps)
                         <button
                             type="button"
                             onClick={() => setTimeType('custom')}
-                            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${timeType === 'custom'
+                            className={`flex-1 py-1.5 px-2 rounded-md text-sm font-medium transition-all ${timeType === 'custom'
                                 ? 'bg-[#ffc0cb] text-pencil'
                                 : 'bg-[#f5f5f5] border border-pencil/20 text-pencil hover:border-[#ffc0cb]'
                                 }`}
@@ -137,16 +137,16 @@ export function LogForm({ seatId, initialData, onSave, onCancel }: LogFormProps)
 
                     {/* 時刻入力フィールド */}
                     {timeType === 'custom' && (
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 gap-2">
                             <div>
-                                <label className="block text-xs text-pencil-light/70 mb-1">時</label>
+                                <label className="block text-[10px] text-pencil-light/70 mb-0.5">時</label>
                                 <select
                                     value={customTime.split(':')[0] || '13'}
                                     onChange={(e) => {
                                         const minute = customTime.split(':')[1] || '00';
                                         setCustomTime(`${e.target.value}:${minute}`);
                                     }}
-                                    className="w-full bg-[#f5f5f5] border border-pencil/20 rounded-lg p-3 focus:ring-2 focus:ring-oshi outline-none transition-all"
+                                    className="w-full bg-[#f5f5f5] border border-pencil/20 rounded-md p-1.5 text-sm focus:ring-2 focus:ring-oshi outline-none transition-all"
                                     required
                                 >
                                     {Array.from({ length: 24 }, (_, i) => i).map(hour => (
@@ -157,14 +157,14 @@ export function LogForm({ seatId, initialData, onSave, onCancel }: LogFormProps)
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-xs text-pencil-light/70 mb-1">分</label>
+                                <label className="block text-[10px] text-pencil-light/70 mb-0.5">分</label>
                                 <select
                                     value={customTime.split(':')[1] || '00'}
                                     onChange={(e) => {
                                         const hour = customTime.split(':')[0] || '13';
                                         setCustomTime(`${hour}:${e.target.value}`);
                                     }}
-                                    className="w-full bg-[#f5f5f5] border border-pencil/20 rounded-lg p-3 focus:ring-2 focus:ring-oshi outline-none transition-all"
+                                    className="w-full bg-[#f5f5f5] border border-pencil/20 rounded-md p-1.5 text-sm focus:ring-2 focus:ring-oshi outline-none transition-all"
                                     required
                                 >
                                     {['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'].map(minute => (
@@ -179,49 +179,49 @@ export function LogForm({ seatId, initialData, onSave, onCancel }: LogFormProps)
                 </div>
 
                 {/* 劇場 */}
-                <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-bold text-pencil-light">
-                        <MapPin className="w-4 h-4" /> 劇場
+                <div className="space-y-1.5">
+                    <label className="flex items-center gap-1.5 text-xs font-bold text-pencil-light">
+                        <MapPin className="w-3.5 h-3.5" /> 劇場
                     </label>
                     <input
                         type="text"
                         value={theater}
                         onChange={(e) => setTheater(e.target.value)}
-                        className="w-full bg-[#f5f5f5] border border-pencil/20 rounded-lg p-3 focus:ring-2 focus:ring-oshi outline-none transition-all"
+                        className="w-full bg-[#f5f5f5] border border-pencil/20 rounded-md p-2 text-sm focus:ring-2 focus:ring-oshi outline-none transition-all"
                         required
                     />
                 </div>
 
                 {/* 座席情報（表示のみ） */}
-                <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-bold text-pencil-light">
-                        <Armchair className="w-4 h-4" /> 座席
+                <div className="space-y-1.5">
+                    <label className="flex items-center gap-1.5 text-xs font-bold text-pencil-light">
+                        <Armchair className="w-3.5 h-3.5" /> 座席
                     </label>
-                    <div className="bg-[#f5f5f5] border border-pencil/20 rounded-lg p-3 text-pencil">
+                    <div className="bg-[#f5f5f5] border border-pencil/20 rounded-md p-2 text-sm text-pencil">
                         {seatId}
                     </div>
                 </div>
 
                 {/* メモ */}
-                <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-bold text-pencil-light">
-                        <FileText className="w-4 h-4" /> メモ
+                <div className="space-y-1.5">
+                    <label className="flex items-center gap-1.5 text-xs font-bold text-pencil-light">
+                        <FileText className="w-3.5 h-3.5" /> メモ
                     </label>
                     <textarea
-                        rows={4}
+                        rows={2}
                         value={memo}
                         onChange={(e) => setMemo(e.target.value)}
-                        placeholder="観劇の感想や記録を自由に記入..."
-                        className="w-full bg-[#f5f5f5] border border-pencil/20 rounded-lg p-3 focus:ring-2 focus:ring-oshi outline-none transition-all resize-none placeholder:text-pencil-light/50"
+                        placeholder="観劇の感想を記入..."
+                        className="w-full bg-[#f5f5f5] border border-pencil/20 rounded-md p-2 text-sm focus:ring-2 focus:ring-oshi outline-none transition-all resize-none placeholder:text-pencil-light/50"
                     />
                 </div>
             </div>
 
             {/* 保存ボタン */}
-            <div className="p-4 border-t border-pencil/10 bg-white shrink-0">
+            <div className="p-3 border-t border-pencil/10 bg-white shrink-0">
                 <button
                     type="submit"
-                    className="w-full bg-[#ffc0cb] text-pencil font-bold py-3 rounded-xl shadow-lg hover:opacity-90 transition-all active:scale-[0.98]"
+                    className="w-full bg-[#ffc0cb] text-pencil font-bold py-2.5 rounded-lg shadow-md hover:opacity-90 transition-all active:scale-[0.98]"
                 >
                     保存
                 </button>
