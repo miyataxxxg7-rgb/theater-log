@@ -23,7 +23,8 @@
    git add .
    git commit -m "Initial commit"
    git branch -M main
-   git remote add origin https://github.com/あなたのユーザー名/theater-log.git
+   git remote add origin https://github.com/miyataxxxg7-rgb/theater-log.git
+   
    git push -u origin main
    ```
    *※「あなたのユーザー名」は自分のものに置き換えてください。*
