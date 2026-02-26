@@ -7,8 +7,7 @@ export function LogEntryForm() {
     const [rating, setRating] = useState(0);
 
     return (
-        {/* 🌟 ここにスクロールの魔法を追加しました！ 🌟 */ }
-        < form className = "space-y-6 max-w-xl mx-auto p-6 max-h-[75vh] overflow-y-auto" >
+        <form className="space-y-6 max-w-xl mx-auto p-6 max-h-[75vh] overflow-y-auto">
             <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-300">タイトル</label>
                 <input
@@ -63,8 +62,8 @@ export function LogEntryForm() {
                         >
                             <Star
                                 className={`w-8 h-8 ${star <= rating
-                                        ? "fill-primary text-primary drop-shadow-[0_0_8px_rgba(139,92,246,0.5)]"
-                                        : "text-gray-600"
+                                    ? "fill-primary text-primary drop-shadow-[0_0_8px_rgba(139,92,246,0.5)]"
+                                    : "text-gray-600"
                                     }`}
                             />
                         </button>
@@ -100,6 +99,6 @@ export function LogEntryForm() {
             >
                 保存する
             </button>
-        </form >
+        </form>
     );
 }
