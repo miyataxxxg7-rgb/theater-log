@@ -79,7 +79,6 @@ export function TicketCalendar() {
                 </button>
             </div>
 
-            {/* 🌟 マス目を少し大きくして、文字とアイコンが入るようにしました！ */}
             <div className="bg-white border border-pencil/20 rounded-2xl p-2 md:p-4 shadow-sm w-full overflow-hidden">
                 <div className="grid grid-cols-7 mb-2 gap-1 text-center">
                     {['日', '月', '火', '水', '木', '金', '土'].map((day, index) => (
@@ -91,37 +90,46 @@ export function TicketCalendar() {
 
                 <div className="grid grid-cols-7 gap-1">
                     {calendarDays.map((day, index) => {
-                        if (day === null) return <div key={`empty-${index}`} className="min-h-[55px] md:min-h-[70px]" />;
+                        if (day === null) return <div key={`empty-${index}`} className="min-h-[65px] md:min-h-[85px]" />;
 
                         const events = getDateEvents(day);
                         return (
                             <div key={day} className={clsx(
-                                "min-h-[55px] md:min-h-[70px] p-0.5 rounded-md border flex flex-col overflow-hidden transition-colors w-full min-w-0",
+                                "min-h-[65px] md:min-h-[85px] p-0.5 rounded-md border flex flex-col overflow-hidden transition-colors w-full min-w-0",
                                 isToday(day) ? "bg-pink-50 border-pink-200" : "bg-gray-50/30 border-gray-100 hover:bg-gray-50"
                             )}>
-                                <span className={clsx("text-[10px] md:text-xs mb-0.5 text-center", isToday(day) ? "text-pink-600 font-bold" : "text-pencil")}>
+                                <span className={clsx("text-[10px] md:text-xs mb-0.5 text-center shrink-0", isToday(day) ? "text-pink-600 font-bold" : "text-pencil")}>
                                     {day}
                                 </span>
 
-                                {/* 🌟 ここに予定のアイコンと文字が入ります！ */}
-                                <div className="flex flex-col gap-[1px] w-full overflow-hidden">
+                                {/* 🌟 予定が複数ある時はスクロールできるようにしました */}
+                                <div className="flex flex-col gap-[2px] w-full overflow-y-auto flex-1 pb-1" style={{ scrollbarWidth: 'none' }}>
                                     {events.map((event, i) => {
                                         let icon = "";
                                         let textColor = "text-pencil";
+                                        let label = "";
 
-                                        if (event.type === 'applying') { icon = "🎫"; textColor = "text-blue-500"; }
-                                        else if (event.type === 'result') { icon = "📢"; textColor = "text-pink-500"; }
-                                        else if (event.type === 'payment') { icon = "⚠️"; textColor = "text-red-500 font-bold"; }
-                                        else if (event.type === 'issue') { icon = "🏪"; textColor = "text-green-600"; }
-                                        else if (event.type === 'show') { icon = "⭐"; textColor = "text-yellow-600 font-bold"; }
+                                        // 🌟 ここで「申込」「当落」などの名前と色をしっかり分けています！
+                                        if (event.type === 'applying') { icon = "🎫"; textColor = "text-blue-500"; label = "申込"; }
+                                        else if (event.type === 'result') { icon = "📢"; textColor = "text-pink-500"; label = "当落"; }
+                                        else if (event.type === 'payment') { icon = "⚠️"; textColor = "text-red-500"; label = "入金"; }
+                                        else if (event.type === 'issue') { icon = "🏪"; textColor = "text-green-600"; label = "発券"; }
+                                        else if (event.type === 'show') { icon = "⭐"; textColor = "text-yellow-600"; label = "公演"; }
 
                                         return (
                                             <div key={`${event.ticket.id}-${event.type}-${i}`}
-                                                className="flex items-center w-full text-[8px] md:text-[9px] leading-tight overflow-hidden rounded-[2px] bg-white/50 px-[1px]"
+                                                className="flex flex-col w-full text-[8px] md:text-[9px] leading-tight overflow-hidden rounded-[2px] bg-white px-[2px] py-[2px] shadow-sm border border-pencil/5"
                                             >
-                                                <span className="mr-[2px] flex-shrink-0">{icon}</span>
-                                                <span className={clsx("truncate min-w-0 flex-1", textColor)}>
-                                                    {event.type === 'applying' ? '申込' : event.ticket.title}
+                                                {/* 1段目：アイコンと「申込」「入金」などの色付きラベル */}
+                                                <div className="flex items-center w-full">
+                                                    <span className="mr-[2px] flex-shrink-0 text-[9px] md:text-[10px] leading-none">{icon}</span>
+                                                    <span className={clsx("font-bold truncate flex-1 leading-none", textColor)}>
+                                                        {label}
+                                                    </span>
+                                                </div>
+                                                {/* 2段目：公演名（少し薄い色で表示） */}
+                                                <span className="truncate min-w-0 w-full text-[7px] md:text-[8px] text-pencil-light font-medium mt-[1px] pl-[12px]">
+                                                    {event.ticket.title}
                                                 </span>
                                             </div>
                                         );
