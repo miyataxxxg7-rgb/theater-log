@@ -90,26 +90,26 @@ export function TicketCalendar() {
 
                 <div className="grid grid-cols-7 gap-1">
                     {calendarDays.map((day, index) => {
-                        if (day === null) return <div key={`empty-${index}`} className="min-h-[65px] md:min-h-[85px]" />;
+                        if (day === null) return <div key={`empty-${index}`} className="min-h-[70px] md:min-h-[90px]" />;
 
                         const events = getDateEvents(day);
                         return (
                             <div key={day} className={clsx(
-                                "min-h-[65px] md:min-h-[85px] p-0.5 rounded-md border flex flex-col overflow-hidden transition-colors w-full min-w-0",
+                                "min-h-[70px] md:min-h-[90px] p-1 rounded-md border flex flex-col overflow-hidden transition-colors w-full min-w-0",
                                 isToday(day) ? "bg-pink-50 border-pink-200" : "bg-gray-50/30 border-gray-100 hover:bg-gray-50"
                             )}>
-                                <span className={clsx("text-[10px] md:text-xs mb-0.5 text-center shrink-0", isToday(day) ? "text-pink-600 font-bold" : "text-pencil")}>
+                                <span className={clsx("text-[10px] md:text-xs mb-1 text-center shrink-0", isToday(day) ? "text-pink-600 font-bold" : "text-pencil")}>
                                     {day}
                                 </span>
 
-                                {/* 🌟 予定が複数ある時はスクロールできるようにしました */}
-                                <div className="flex flex-col gap-[2px] w-full overflow-y-auto flex-1 pb-1" style={{ scrollbarWidth: 'none' }}>
+                                {/* 🌟 2段表示のイベントコンテナ */}
+                                <div className="flex flex-col gap-1 w-full overflow-y-auto flex-1 pb-1" style={{ scrollbarWidth: 'none' }}>
                                     {events.map((event, i) => {
                                         let icon = "";
                                         let textColor = "text-pencil";
                                         let label = "";
 
-                                        // 🌟 ここで「申込」「当落」などの名前と色をしっかり分けています！
+                                        // アイコンとラベルの設定
                                         if (event.type === 'applying') { icon = "🎫"; textColor = "text-blue-500"; label = "申込"; }
                                         else if (event.type === 'result') { icon = "📢"; textColor = "text-pink-500"; label = "当落"; }
                                         else if (event.type === 'payment') { icon = "⚠️"; textColor = "text-red-500"; label = "入金"; }
@@ -118,17 +118,17 @@ export function TicketCalendar() {
 
                                         return (
                                             <div key={`${event.ticket.id}-${event.type}-${i}`}
-                                                className="flex flex-col w-full text-[8px] md:text-[9px] leading-tight overflow-hidden rounded-[2px] bg-white px-[2px] py-[2px] shadow-sm border border-pencil/5"
+                                                className="flex flex-col w-full overflow-hidden rounded-[4px] bg-white px-1 py-0.5 shadow-sm border border-pencil/10"
                                             >
-                                                {/* 1段目：アイコンと「申込」「入金」などの色付きラベル */}
-                                                <div className="flex items-center w-full">
-                                                    <span className="mr-[2px] flex-shrink-0 text-[9px] md:text-[10px] leading-none">{icon}</span>
-                                                    <span className={clsx("font-bold truncate flex-1 leading-none", textColor)}>
+                                                {/* 1段目：アイコンとラベル（色付き） */}
+                                                <div className="flex items-center w-full gap-0.5">
+                                                    <span className="flex-shrink-0 text-[10px] leading-none">{icon}</span>
+                                                    <span className={clsx("font-bold text-[9px] md:text-[10px] truncate leading-none", textColor)}>
                                                         {label}
                                                     </span>
                                                 </div>
-                                                {/* 2段目：公演名（少し薄い色で表示） */}
-                                                <span className="truncate min-w-0 w-full text-[7px] md:text-[8px] text-pencil-light font-medium mt-[1px] pl-[12px]">
+                                                {/* 2段目：公演名 */}
+                                                <span className="truncate w-full text-[8px] md:text-[9px] text-pencil-light font-medium mt-0.5">
                                                     {event.ticket.title}
                                                 </span>
                                             </div>
