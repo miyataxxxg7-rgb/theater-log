@@ -7,7 +7,6 @@ import { Ticket, TicketStatus, STATUS_CONFIG } from "@/types/ticket";
 import clsx from "clsx";
 
 export function TicketCalendar() {
-    // 🌟 修正ポイント：すべてのチケットをしっかり読み込むようにしました！
     const { tickets } = useTickets();
     const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -25,7 +24,6 @@ export function TicketCalendar() {
         return year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
     };
 
-    // その日にある予定を探す賢い機能
     const getDateEvents = (day: number) => {
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         const events: Array<{ type: string; ticket: Ticket; config: typeof STATUS_CONFIG[TicketStatus] }> = [];
@@ -68,7 +66,6 @@ export function TicketCalendar() {
 
     return (
         <div className="space-y-4 w-full max-w-2xl mx-auto">
-            {/* ヘッダー */}
             <div className="flex items-center justify-between px-2">
                 <button onClick={goToPreviousMonth} className="p-2 hover:bg-black/5 rounded-full">
                     <ChevronLeft className="w-5 h-5 text-pencil" />
@@ -82,9 +79,8 @@ export function TicketCalendar() {
                 </button>
             </div>
 
-            {/* 🌟 修正ポイント：マス目を少し大きくして、文字とアイコンが入るようにしました！ */}
+            {/* 🌟 マス目を少し大きくして、文字とアイコンが入るようにしました！ */}
             <div className="bg-white border border-pencil/20 rounded-2xl p-2 md:p-4 shadow-sm w-full overflow-hidden">
-                {/* 曜日 */}
                 <div className="grid grid-cols-7 mb-2 gap-1 text-center">
                     {['日', '月', '火', '水', '木', '金', '土'].map((day, index) => (
                         <div key={day} className={clsx("text-[10px] md:text-xs font-bold py-1", index === 0 ? "text-pink-500" : index === 6 ? "text-blue-500" : "text-pencil-light")}>
@@ -93,7 +89,6 @@ export function TicketCalendar() {
                     ))}
                 </div>
 
-                {/* 日付グリッド */}
                 <div className="grid grid-cols-7 gap-1">
                     {calendarDays.map((day, index) => {
                         if (day === null) return <div key={`empty-${index}`} className="min-h-[55px] md:min-h-[70px]" />;
@@ -108,7 +103,7 @@ export function TicketCalendar() {
                                     {day}
                                 </span>
 
-                                {/* ここに予定のアイコンと文字が入ります！ */}
+                                {/* 🌟 ここに予定のアイコンと文字が入ります！ */}
                                 <div className="flex flex-col gap-[1px] w-full overflow-hidden">
                                     {events.map((event, i) => {
                                         let icon = "";
@@ -138,7 +133,6 @@ export function TicketCalendar() {
                 </div>
             </div>
 
-            {/* 凡例 */}
             <div className="flex flex-wrap gap-x-3 gap-y-1.5 text-[10px] md:text-xs px-2 justify-center pb-8">
                 {(Object.keys(STATUS_CONFIG) as TicketStatus[]).map((status) => {
                     const config = STATUS_CONFIG[status];
