@@ -27,8 +27,6 @@ export default function Home() {
             </div>
           )}
 
-
-
           {activeTab === "log" && (
             <div className="space-y-4">
               <h2 className="text-xl font-bold">観劇ログ</h2>
@@ -50,17 +48,19 @@ export default function Home() {
             <div className="space-y-4">
               <h2 className="text-xl font-bold">チケット管理</h2>
 
-              {/* スプリットビュー */}
-              <div className="flex flex-col md:flex-row gap-6 items-start">
-                {/* エリアA: チケット一覧 (横幅 35%程度に固定) */}
-                <div className="order-2 md:order-1 w-full md:w-[35%] md:min-w-[320px] md:max-w-[400px] flex-shrink-0">
+              {/* 🌟 スマホ用の綺麗な縦並びに変更しました！ 🌟 */}
+              <div className="flex flex-col gap-8 w-full">
+
+                {/* カレンダー（上） */}
+                <div className="w-full">
+                  <TicketCalendar />
+                </div>
+
+                {/* チケット一覧（下） */}
+                <div className="w-full">
                   <TicketList />
                 </div>
 
-                {/* エリアB: カレンダー (残りのスペースをすべて使用) */}
-                <div className="order-1 md:order-2 w-full flex-grow min-w-0">
-                  <TicketCalendar />
-                </div>
               </div>
             </div>
           )}
