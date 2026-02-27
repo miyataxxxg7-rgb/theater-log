@@ -1,136 +1,140 @@
 "use client";
 
-import { useState } from "react";
-import { Armchair, BookOpen, Building2, Calendar as CalendarIcon } from "lucide-react";
-import { Header } from "@/components/layout/Header";
-import { SeatMapSelector } from "@/components/theater/SeatMapSelector";
-import TicketList from "@/components/ticket/TicketList";
-import { TicketCalendar } from "@/components/calendar/Calendar";
+import { useState, useMemo } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTickets } from "@/hooks/useTickets";
+import { Ticket, TicketStatus, STATUS_CONFIG } from "@/types/ticket";
 import clsx from "clsx";
 
-import { LogList } from "@/components/log/LogList";
+export function TicketCalendar() {
+  // 🌟 修正ポイント：getTicketsForDate（公演日しか探さない機能）を使うのをやめました！
+  const { tickets } = useTickets();
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-type TabId = "map" | "log" | "theater" | "schedule";
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
 
-export default function Home() {
-  const [activeTab, setActiveTab] = useState<TabId>("map");
+  const firstDayOfMonth = new Date(year, month, 1);
+  const lastDayOfMonth = new Date(year, month + 1, 0);
+
+  const firstDayOfWeek = firstDayOfMonth.getDay();
+  const daysInMonth = lastDayOfMonth.getDate();
+
+  const today = new Date();
+  const isToday = (day: number) => {
+    return (
+      year === today.getFullYear() &&
+      month === today.getMonth() &&
+      day === today.getDate()
+    );
+  };
+
+  const getDateEvents = (day: number) => {
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const events: Array<{ type: string; ticket: Ticket; config: typeof STATUS_CONFIG[TicketStatus] }> = [];
+
+    // 🌟 修正ポイント：すべてのチケットを直接チェックして、少しでも関連する日なら丸をつけるようにしました！
+    tickets.forEach(ticket => {
+      const { applicationStart, applicationEnd, resultDate, paymentDeadline, ticketIssueDate, showDate } = ticket.dates;
+      const config = STATUS_CONFIG[ticket.status];
+
+      if (applicationStart && applicationEnd && dateStr >= applicationStart && dateStr <= applicationEnd) {
+        events.push({ type: 'applying', ticket, config });
+      }
+      if (resultDate && dateStr === resultDate) {
+        events.push({ type: 'result', ticket, config });
+      }
+      if (paymentDeadline && dateStr === paymentDeadline.split('T')[0]) {
+        events.push({ type: 'payment', ticket, config });
+      }
+      if (ticketIssueDate && dateStr === ticketIssueDate) {
+        events.push({ type: 'issue', ticket, config });
+      }
+      if (showDate && dateStr === showDate.split('T')[0]) {
+        events.push({ type: 'show', ticket, config });
+      }
+    });
+
+    return events;
+  };
+
+  const goToPreviousMonth = () => setCurrentDate(new Date(year, month - 1, 1));
+  const goToNextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
+  const goToToday = () => setCurrentDate(new Date());
+
+  const calendarDays = useMemo(() => {
+    const days = [];
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      days.push(null);
+    }
+    for (let day = 1; day <= daysInMonth; day++) {
+      days.push(day);
+    }
+    return days;
+  }, [firstDayOfWeek, daysInMonth]);
 
   return (
-    <div className="min-h-screen bg-paper pb-24 text-pencil font-zen">
-      <Header />
+    <div className="space-y-4 max-w-md mx-auto">
+      {/* ヘッダー */}
+      <div className="flex items-center justify-between px-2">
+        <button onClick={goToPreviousMonth} className="p-2 hover:bg-black/5 rounded-full">
+          <ChevronLeft className="w-5 h-5 text-pencil" />
+        </button>
 
-      <main className="p-4 max-w-6xl mx-auto">
-        <div className="animate-in fade-in zoom-in-95 duration-300">
-          {activeTab === "map" && (
-            <div className="space-y-4">
-              <SeatMapSelector />
-            </div>
-          )}
-
-          {activeTab === "log" && (
-            <div className="space-y-4">
-              <h2 className="text-xl font-bold">観劇ログ</h2>
-              <LogList />
-            </div>
-          )}
-
-          {activeTab === "theater" && (
-            <div className="space-y-4">
-              <h2 className="text-xl font-bold">劇場情報</h2>
-              <div className="bg-white/50 p-4 rounded-lg border border-pencil/20">
-                <h3 className="font-bold mb-2">梅田芸術劇場メインホール</h3>
-                <p>〒530-0013 大阪府大阪市北区茶屋町19-1</p>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "schedule" && (
-            <div className="space-y-4">
-              <h2 className="text-xl font-bold">チケット管理</h2>
-
-              {/* 🌟 スマホ用の綺麗な縦並びに変更しました！ 🌟 */}
-              <div className="flex flex-col gap-8 w-full">
-
-                {/* カレンダー（上） */}
-                <div className="w-full">
-                  <TicketCalendar />
-                </div>
-
-                {/* チケット一覧（下） */}
-                <div className="w-full">
-                  <TicketList />
-                </div>
-
-              </div>
-            </div>
-          )}
+        <div className="flex items-center gap-3">
+          <h2 className="text-lg font-bold text-pencil">{year}年 {month + 1}月</h2>
+          <button onClick={goToToday} className="text-[10px] px-2 py-0.5 bg-[#ffc0cb]/20 text-pencil rounded-full">今日</button>
         </div>
-      </main>
 
-      {/* Tab Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-paper/90 backdrop-blur-md border-t border-pencil/10 p-2 pb-6 safe-area-pb z-50 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)]">
-        <div className="flex justify-around items-center max-w-md mx-auto">
-          <TabButton
-            id="map"
-            label="座席表"
-            icon={Armchair}
-            activeId={activeTab}
-            onClick={setActiveTab}
-          />
-          <TabButton
-            id="log"
-            label="ログ"
-            icon={BookOpen}
-            activeId={activeTab}
-            onClick={setActiveTab}
-          />
-          <TabButton
-            id="theater"
-            label="劇場"
-            icon={Building2}
-            activeId={activeTab}
-            onClick={setActiveTab}
-          />
-          <TabButton
-            id="schedule"
-            label="予定"
-            icon={CalendarIcon}
-            activeId={activeTab}
-            onClick={setActiveTab}
-          />
+        <button onClick={goToNextMonth} className="p-2 hover:bg-black/5 rounded-full">
+          <ChevronRight className="w-5 h-5 text-pencil" />
+        </button>
+      </div>
+
+      {/* カレンダー本体 */}
+      <div className="bg-white border border-pencil/10 rounded-xl p-2 shadow-sm w-full">
+        {/* 曜日 */}
+        <div className="grid grid-cols-7 mb-2">
+          {['日', '月', '火', '水', '木', '金', '土'].map((day, index) => (
+            <div key={day} className={clsx("text-center text-[10px] font-bold", index === 0 ? "text-pink-500" : index === 6 ? "text-blue-500" : "text-pencil-light")}>
+              {day}
+            </div>
+          ))}
         </div>
-      </nav>
+
+        {/* 日付グリッド */}
+        <div className="grid grid-cols-7 gap-px bg-gray-100 border border-gray-100">
+          {calendarDays.map((day, index) => {
+            if (day === null) return <div key={`empty-${index}`} className="bg-white aspect-square" />;
+
+            const events = getDateEvents(day);
+            return (
+              <div key={day} className={clsx("bg-white aspect-square p-0.5 relative flex flex-col items-center", isToday(day) && "bg-pink-50")}>
+                <span className={clsx("text-[10px] z-10", isToday(day) ? "text-pink-600 font-bold" : "text-pencil")}>{day}</span>
+                <div className="mt-auto mb-0.5 flex flex-wrap justify-center gap-0.5 w-full px-0.5">
+                  {/* 予定があればドットを表示 */}
+                  {events.slice(0, 3).map((event, i) => (
+                    <div key={i} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: event.config.color }} />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 凡例 */}
+      <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] px-2 justify-center pb-10">
+        {(Object.keys(STATUS_CONFIG) as TicketStatus[]).map((status) => {
+          const config = STATUS_CONFIG[status];
+          return (
+            <div key={status} className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: config.color }} />
+              <span className="text-pencil-light">{config.label}</span>
+            </div>
+          );
+        })}
+      </div>
     </div>
-  );
-}
-
-function TabButton({
-  id,
-  label,
-  icon: Icon,
-  activeId,
-  onClick
-}: {
-  id: TabId;
-  label: string;
-  icon: React.ElementType;
-  activeId: TabId;
-  onClick: (id: TabId) => void;
-}) {
-  const isActive = id === activeId;
-
-  return (
-    <button
-      onClick={() => onClick(id)}
-      className={clsx(
-        "flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-300 w-16",
-        isActive
-          ? "text-oshi scale-110 bg-oshi-dim/30"
-          : "text-pencil-light hover:text-pencil hover:bg-black/5"
-      )}
-    >
-      <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
-      <span className="text-[10px] mt-1 font-bold">{label}</span>
-    </button>
   );
 }
