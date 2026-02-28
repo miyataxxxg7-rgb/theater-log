@@ -9,8 +9,6 @@ import clsx from "clsx";
 export function TicketCalendar() {
     const { tickets } = useTickets();
     const [currentDate, setCurrentDate] = useState(new Date());
-
-    // 🌟 ポップアップ用の状態（どの日付が押されたか）を記憶する機能を追加！
     const [popupData, setPopupData] = useState<{ day: number, events: any[] } | null>(null);
 
     const year = currentDate.getFullYear();
@@ -99,7 +97,6 @@ export function TicketCalendar() {
                         return (
                             <div
                                 key={day}
-                                // 🌟 予定がある日をクリックしたらポップアップを出す！
                                 onClick={() => events.length > 0 && setPopupData({ day, events })}
                                 className={clsx(
                                     "min-h-[70px] md:min-h-[90px] p-1 rounded-md border flex flex-col overflow-hidden transition-colors w-full min-w-0",
@@ -156,7 +153,6 @@ export function TicketCalendar() {
                 })}
             </div>
 
-            {/* 🌟 ここからがポップアップ（モーダル）の魔法です！ */}
             {popupData && (
                 <div
                     className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in zoom-in-95 duration-200"
@@ -179,7 +175,17 @@ export function TicketCalendar() {
                             {popupData.events.map((event, i) => {
                                 let icon = ""; let label = ""; let colorClass = ""; let timeStr = "";
 
-                                if (event.type === 'applying') { icon = "🎫"; label = "申込期間"; colorClass = "text-blue-500"; }
+                                // 🌟 ここが変更ポイント！「申込期間」の時だけ日付を取り出して合体させます！
+                                if (event.type === 'applying') {
+                                    icon = "🎫"; label = "申込期間"; colorClass = "text-blue-500";
+                                    const start = event.ticket.dates.applicationStart;
+                                    const end = event.ticket.dates.applicationEnd;
+                                    if (start && end) {
+                                        // "2026-02-27" を "2/27" のような形に変換する魔法
+                                        const formatMD = (d: string) => d.split('-').length === 3 ? `${Number(d.split('-')[1])}/${Number(d.split('-')[2])}` : d;
+                                        timeStr = `${formatMD(start)} 〜 ${formatMD(end)}`;
+                                    }
+                                }
                                 else if (event.type === 'result') { icon = "📢"; label = "当落発表"; colorClass = "text-pink-500"; }
                                 else if (event.type === 'payment') {
                                     icon = "⚠️"; label = "入金締切"; colorClass = "text-red-500";
@@ -201,6 +207,7 @@ export function TicketCalendar() {
                                                 <span className={clsx("text-xs font-bold px-1.5 py-0.5 rounded-sm bg-opacity-10", colorClass)} style={{ backgroundColor: `currentColor` }}>
                                                     <span style={{ filter: 'brightness(0.7)' }}>{label}</span>
                                                 </span>
+                                                {/* 🌟 ここにさっき作った「2/27 〜 3/2」が表示されます！ */}
                                                 {timeStr && <span className="text-xs font-bold text-pencil-light">{timeStr}</span>}
                                             </div>
                                             <p className="font-bold text-sm text-pencil mt-1.5 leading-tight">{event.ticket.title}</p>
