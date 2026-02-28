@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Ticket, TicketStatus, STATUS_CONFIG } from "@/types/ticket";
-import { X, Calendar, MapPin, FileText, Tag } from "lucide-react";
+import { X, Tag } from "lucide-react";
 import clsx from "clsx";
 
 interface TicketFormProps {
@@ -20,24 +20,33 @@ export function TicketForm({ initialData, onSave, onCancel }: TicketFormProps) {
 
     const [applicationStart, setApplicationStart] = useState(initialData?.dates?.applicationStart || "");
     const [applicationEnd, setApplicationEnd] = useState(initialData?.dates?.applicationEnd || "");
-    const [resultDate, setResultDate] = useState(initialData?.dates?.resultDate || "");
+
+    // 🌟 当落発表にも時間を追加！
+    const [resultDate, setResultDate] = useState(initialData?.dates?.resultDate ? initialData.dates.resultDate.split('T')[0] : "");
+    const [resultTime, setResultTime] = useState(initialData?.dates?.resultDate && initialData.dates.resultDate.includes('T') ? initialData.dates.resultDate.split('T')[1]?.substring(0, 5) : "");
+
     const [paymentDeadline, setPaymentDeadline] = useState(initialData?.dates?.paymentDeadline ? initialData.dates.paymentDeadline.split('T')[0] : "");
-    const [paymentDeadlineTime, setPaymentDeadlineTime] = useState(initialData?.dates?.paymentDeadline ? initialData.dates.paymentDeadline.split('T')[1]?.substring(0, 5) || "23:59" : "23:59");
+    const [paymentDeadlineTime, setPaymentDeadlineTime] = useState(initialData?.dates?.paymentDeadline && initialData.dates.paymentDeadline.includes('T') ? initialData.dates.paymentDeadline.split('T')[1]?.substring(0, 5) : "");
+
     const [ticketIssueDate, setTicketIssueDate] = useState(initialData?.dates?.ticketIssueDate || "");
+
     const [showDate, setShowDate] = useState(initialData?.dates?.showDate ? initialData.dates.showDate.split('T')[0] : "");
-    const [showTime, setShowTime] = useState(initialData?.dates?.showDate ? initialData.dates.showDate.split('T')[1]?.substring(0, 5) || "13:00" : "13:00");
+    const [showTime, setShowTime] = useState(initialData?.dates?.showDate && initialData.dates.showDate.includes('T') ? initialData.dates.showDate.split('T')[1]?.substring(0, 5) : "");
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const fullPaymentDeadline = paymentDeadline && paymentDeadlineTime ? `${paymentDeadline}T${paymentDeadlineTime}:00` : undefined;
-        const fullShowDate = showDate && showTime ? `${showDate}T${showTime}:00` : undefined;
+
+        // 日付と時間を合体させる処理
+        const fullResultDate = resultDate ? (resultTime ? `${resultDate}T${resultTime}:00` : resultDate) : undefined;
+        const fullPaymentDeadline = paymentDeadline ? (paymentDeadlineTime ? `${paymentDeadline}T${paymentDeadlineTime}:00` : paymentDeadline) : undefined;
+        const fullShowDate = showDate ? (showTime ? `${showDate}T${showTime}:00` : showDate) : undefined;
 
         onSave({
             title, status,
             dates: {
                 applicationStart: applicationStart || undefined,
                 applicationEnd: applicationEnd || undefined,
-                resultDate: resultDate || undefined,
+                resultDate: fullResultDate,
                 paymentDeadline: fullPaymentDeadline,
                 ticketIssueDate: ticketIssueDate || undefined,
                 showDate: fullShowDate,
@@ -50,13 +59,11 @@ export function TicketForm({ initialData, onSave, onCancel }: TicketFormProps) {
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col h-full max-h-[82vh] bg-white overflow-hidden">
-            {/* ヘッダー: さらに細く */}
             <div className="flex items-center justify-between px-3 py-2 border-b border-pencil/10 shrink-0">
                 <h3 className="font-bold text-sm text-pencil">チケット登録/編集</h3>
                 <button type="button" onClick={onCancel} className="p-1 hover:bg-black/5 rounded-full"><X className="w-5 h-5" /></button>
             </div>
 
-            {/* 本体: 隙間(space-y)を最小限に */}
             <div className="flex-1 overflow-y-auto p-3 space-y-3 touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
                 <div className="space-y-1">
                     <label className="flex items-center gap-1 text-[10px] font-bold text-pencil-light"><Tag className="w-3 h-3" /> 公演名 *</label>
@@ -77,18 +84,34 @@ export function TicketForm({ initialData, onSave, onCancel }: TicketFormProps) {
                 </div>
 
                 <div className="space-y-2 p-2 bg-gray-50 rounded border border-pencil/5">
-                    <div className="grid grid-cols-2 gap-x-2 gap-y-1.5">
-                        <div className="col-span-2 grid grid-cols-2 gap-2">
+                    {/* 🌟 項目を「時系列順」に綺麗に並べ直しました！ */}
+                    <div className="grid grid-cols-1 gap-y-2">
+                        {/* 1. 申込期間 */}
+                        <div className="grid grid-cols-2 gap-2">
                             <div className="space-y-0.5"><label className="text-[9px] font-bold text-pencil-light">申込開始</label><input type="date" value={applicationStart} onChange={(e) => setApplicationStart(e.target.value)} className="w-full bg-white border border-pencil/10 rounded p-1 text-[11px]" /></div>
                             <div className="space-y-0.5"><label className="text-[9px] font-bold text-pencil-light">申込終了</label><input type="date" value={applicationEnd} onChange={(e) => setApplicationEnd(e.target.value)} className="w-full bg-white border border-pencil/10 rounded p-1 text-[11px]" /></div>
                         </div>
-                        <div className="space-y-0.5"><label className="text-[9px] font-bold text-pencil-light">当落発表</label><input type="date" value={resultDate} onChange={(e) => setResultDate(e.target.value)} className="w-full bg-white border border-pencil/10 rounded p-1 text-[11px]" /></div>
-                        <div className="space-y-0.5"><label className="text-[9px] font-bold text-pencil-light">発券開始</label><input type="date" value={ticketIssueDate} onChange={(e) => setTicketIssueDate(e.target.value)} className="w-full bg-white border border-pencil/10 rounded p-1 text-[11px]" /></div>
-                        <div className="col-span-2 grid grid-cols-3 gap-1 items-end">
+
+                        {/* 2. 当落発表（時間あり） */}
+                        <div className="grid grid-cols-3 gap-1 items-end">
+                            <div className="col-span-2 space-y-0.5"><label className="text-[9px] font-bold text-pencil-light">当落発表</label><input type="date" value={resultDate} onChange={(e) => setResultDate(e.target.value)} className="w-full bg-white border border-pencil/10 rounded p-1 text-[11px]" /></div>
+                            <input type="time" value={resultTime} onChange={(e) => setResultTime(e.target.value)} className="bg-white border border-pencil/10 rounded p-1 text-[11px]" />
+                        </div>
+
+                        {/* 3. 入金締切（時間あり） */}
+                        <div className="grid grid-cols-3 gap-1 items-end">
                             <div className="col-span-2 space-y-0.5"><label className="text-[9px] font-bold text-pencil-light">入金締切</label><input type="date" value={paymentDeadline} onChange={(e) => setPaymentDeadline(e.target.value)} className="w-full bg-white border border-pencil/10 rounded p-1 text-[11px]" /></div>
                             <input type="time" value={paymentDeadlineTime} onChange={(e) => setPaymentDeadlineTime(e.target.value)} className="bg-white border border-pencil/10 rounded p-1 text-[11px]" />
                         </div>
-                        <div className="col-span-2 grid grid-cols-3 gap-1 items-end">
+
+                        {/* 4. 発券開始 */}
+                        <div className="space-y-0.5">
+                            <label className="text-[9px] font-bold text-pencil-light">発券開始</label>
+                            <input type="date" value={ticketIssueDate} onChange={(e) => setTicketIssueDate(e.target.value)} className="w-full bg-white border border-pencil/10 rounded p-1 text-[11px]" />
+                        </div>
+
+                        {/* 5. 公演日時（時間あり） */}
+                        <div className="grid grid-cols-3 gap-1 items-end">
                             <div className="col-span-2 space-y-0.5"><label className="text-[9px] font-bold text-pencil-light">公演日時</label><input type="date" value={showDate} onChange={(e) => setShowDate(e.target.value)} className="w-full bg-white border border-pencil/10 rounded p-1 text-[11px]" /></div>
                             <input type="time" value={showTime} onChange={(e) => setShowTime(e.target.value)} className="bg-white border border-pencil/10 rounded p-1 text-[11px]" />
                         </div>

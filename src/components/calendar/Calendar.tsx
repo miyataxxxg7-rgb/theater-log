@@ -37,7 +37,8 @@ export function TicketCalendar() {
             if (applicationStart && applicationEnd && dateStr >= applicationStart && dateStr <= applicationEnd) {
                 events.push({ type: 'applying', ticket, config });
             }
-            if (resultDate && dateStr === resultDate) {
+            // 🌟 当落発表に時間が追加されても、日付だけで正しく判定できるように修正！
+            if (resultDate && dateStr === resultDate.split('T')[0]) {
                 events.push({ type: 'result', ticket, config });
             }
             if (paymentDeadline && dateStr === paymentDeadline.split('T')[0]) {
@@ -175,26 +176,34 @@ export function TicketCalendar() {
                             {popupData.events.map((event, i) => {
                                 let icon = ""; let label = ""; let colorClass = ""; let timeStr = "";
 
-                                // 🌟 ここが変更ポイント！「申込期間」の時だけ日付を取り出して合体させます！
                                 if (event.type === 'applying') {
                                     icon = "🎫"; label = "申込期間"; colorClass = "text-blue-500";
                                     const start = event.ticket.dates.applicationStart;
                                     const end = event.ticket.dates.applicationEnd;
                                     if (start && end) {
-                                        // "2026-02-27" を "2/27" のような形に変換する魔法
                                         const formatMD = (d: string) => d.split('-').length === 3 ? `${Number(d.split('-')[1])}/${Number(d.split('-')[2])}` : d;
                                         timeStr = `${formatMD(start)} 〜 ${formatMD(end)}`;
                                     }
                                 }
-                                else if (event.type === 'result') { icon = "📢"; label = "当落発表"; colorClass = "text-pink-500"; }
+                                // 🌟 当落発表の時間も表示されるようにしました！
+                                else if (event.type === 'result') {
+                                    icon = "📢"; label = "当落発表"; colorClass = "text-pink-500";
+                                    if (event.ticket.dates.resultDate && event.ticket.dates.resultDate.includes('T')) {
+                                        timeStr = event.ticket.dates.resultDate.split('T')[1]?.substring(0, 5) || "";
+                                    }
+                                }
                                 else if (event.type === 'payment') {
                                     icon = "⚠️"; label = "入金締切"; colorClass = "text-red-500";
-                                    if (event.ticket.dates.paymentDeadline) timeStr = event.ticket.dates.paymentDeadline.split('T')[1]?.substring(0, 5) || "";
+                                    if (event.ticket.dates.paymentDeadline && event.ticket.dates.paymentDeadline.includes('T')) {
+                                        timeStr = event.ticket.dates.paymentDeadline.split('T')[1]?.substring(0, 5) || "";
+                                    }
                                 }
                                 else if (event.type === 'issue') { icon = "🏪"; label = "発券開始"; colorClass = "text-green-600"; }
                                 else if (event.type === 'show') {
                                     icon = "⭐"; label = "公演日時"; colorClass = "text-yellow-600";
-                                    if (event.ticket.dates.showDate) timeStr = event.ticket.dates.showDate.split('T')[1]?.substring(0, 5) || "";
+                                    if (event.ticket.dates.showDate && event.ticket.dates.showDate.includes('T')) {
+                                        timeStr = event.ticket.dates.showDate.split('T')[1]?.substring(0, 5) || "";
+                                    }
                                 }
 
                                 return (
@@ -207,12 +216,19 @@ export function TicketCalendar() {
                                                 <span className={clsx("text-xs font-bold px-1.5 py-0.5 rounded-sm bg-opacity-10", colorClass)} style={{ backgroundColor: `currentColor` }}>
                                                     <span style={{ filter: 'brightness(0.7)' }}>{label}</span>
                                                 </span>
-                                                {/* 🌟 ここにさっき作った「2/27 〜 3/2」が表示されます！ */}
                                                 {timeStr && <span className="text-xs font-bold text-pencil-light">{timeStr}</span>}
                                             </div>
                                             <p className="font-bold text-sm text-pencil mt-1.5 leading-tight">{event.ticket.title}</p>
+
                                             {event.ticket.venue && (
                                                 <p className="text-xs text-pencil-light mt-1 truncate">📍 {event.ticket.venue}</p>
+                                            )}
+
+                                            {/* 🌟 メモの表示を追加しました！ */}
+                                            {event.ticket.memo && (
+                                                <div className="mt-1.5 text-[10px] md:text-xs text-pencil-light bg-black/5 p-1.5 rounded whitespace-pre-wrap">
+                                                    📝 {event.ticket.memo}
+                                                </div>
                                             )}
                                         </div>
                                     </div>
