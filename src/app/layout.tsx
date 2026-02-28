@@ -19,21 +19,15 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={`${inter.className} bg-gray-100 text-gray-900`}>
-        {/* スマホ風の中央寄せレイアウト */}
-        <div className="max-w-md mx-auto bg-white min-h-screen shadow-lg relative pb-20 pt-14">
+        {/* 🌟 pt-14（上の隙間）を消して綺麗に詰めました！ */}
+        <div className="max-w-md mx-auto bg-white min-h-screen shadow-lg relative pb-20">
 
-          {/* トップヘッダー（推SHIGOTO） */}
-          <header className="absolute top-0 w-full max-w-md bg-white border-b border-gray-200 z-10 flex justify-between items-center px-4 h-14">
-            <div className="font-bold text-lg tracking-wider">推SHIGOTO</div>
-            <button className="p-2">
-              <Share2 size={20} className="text-gray-600" />
-            </button>
-          </header>
+          {/* ✂️ ここにあった自己主張の激しいトップヘッダーを削除しました！ */}
 
           {/* メインコンテンツ（各画面がここに入ります） */}
           <main className="p-4">{children}</main>
 
-          {/* 下部ナビゲーション（アイコンメニュー） */}
+          {/* 下部ナビゲーション（アイコンメニュー）は絶対残します！ */}
           <nav className="fixed bottom-0 w-full max-w-md bg-white border-t border-gray-200 z-10">
             <div className="flex justify-around items-center h-16 pb-2">
               <Link href="/theater" className="flex flex-col items-center text-gray-600 hover:text-purple-600">
