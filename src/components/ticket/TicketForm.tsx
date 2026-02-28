@@ -64,6 +64,7 @@ export function TicketForm({ initialData, onSave, onCancel }: TicketFormProps) {
                 <button type="button" onClick={onCancel} className="p-1 hover:bg-black/5 rounded-full"><X className="w-5 h-5" /></button>
             </div>
 
+            {/* 👇 ここがスクロールできるエリアです 👇 */}
             <div className="flex-1 overflow-y-auto p-3 space-y-3 touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
                 <div className="space-y-1">
                     <label className="flex items-center gap-1 text-[10px] font-bold text-pencil-light"><Tag className="w-3 h-3" /> 公演名 *</label>
@@ -127,12 +128,13 @@ export function TicketForm({ initialData, onSave, onCancel }: TicketFormProps) {
                     <label className="text-[9px] font-bold text-pencil-light">メモ</label>
                     <textarea rows={1} value={memo} onChange={(e) => setMemo(e.target.value)} className="w-full bg-gray-50 border border-pencil/10 rounded p-1 text-xs outline-none resize-none" />
                 </div>
-            </div>
 
-            <div className="p-2 border-t border-pencil/10 bg-white shrink-0">
-                <button type="submit" className="w-full font-bold py-2 rounded text-sm shadow transition-all active:scale-[0.98]" style={{ backgroundColor: currentConfig.color, color: 'white' }}>
-                    {initialData ? '更新' : '登録'}
-                </button>
+                {/* 🌟 ここが移動してきたボタンです！一番下までスクロールすると出てきます */}
+                <div className="pt-4 pb-8">
+                    <button type="submit" className="w-full font-bold py-3 rounded text-sm shadow transition-all active:scale-[0.98]" style={{ backgroundColor: currentConfig.color, color: 'white' }}>
+                        {initialData ? '更新' : '登録'}
+                    </button>
+                </div>
             </div>
         </form>
     );
