@@ -18,26 +18,21 @@ export function SeatMap({ onSeatSelect }: SeatMapProps) {
 
     const { logs, addLog, getLogBySeatId } = useLogs();
 
-    // 🌟 魔法のスクロールの準備（スクロールする場所を記憶する透明な指）
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-    // 🌟 開いた瞬間に、ど真ん中に自動でスクロールさせる魔法！
     useEffect(() => {
         if (scrollContainerRef.current) {
             const container = scrollContainerRef.current;
-            // 横幅2800pxの真ん中（1400px）から、画面の半分の長さを引いて、ちょうどど真ん中が映るように計算！
             const targetScrollLeft = 1400 - (container.clientWidth / 2);
-            // 少しだけ下（ステージ寄り）にスクロール
             const targetScrollTop = 50;
 
-            // ワープ実行！
             container.scrollTo({
                 left: targetScrollLeft,
                 top: targetScrollTop,
-                behavior: 'instant' // 開いた瞬間なので、アニメーションなしで一瞬でワープ
+                behavior: 'instant'
             });
         }
-    }, []); // 空の配列 [] なので、この画面が開かれた「最初の一回」だけ発動します
+    }, []);
 
     const mergedFloorMap = useMemo(() => {
         return floorMap.map(floor => ({
@@ -76,8 +71,8 @@ export function SeatMap({ onSeatSelect }: SeatMapProps) {
     const CROSS_AISLE_GAP = 60;
 
     return (
-        // 🌟 ここにさっき作った「透明な指（ref）」を取り付けます！
-        <div ref={scrollContainerRef} className="w-full h-full overflow-auto bg-paper">
+        // 🌟 ここを変更しました！高さを「h-[70vh]」に制限し、角を丸くして枠線をつけました！
+        <div ref={scrollContainerRef} className="w-full h-[70vh] overflow-auto bg-paper border border-pencil/10 rounded-xl shadow-inner relative">
             <div className="relative w-[2800px] h-[1600px] shrink-0 pt-20 mx-auto">
                 <div
                     className="absolute left-1/2 -translate-x-1/2 w-[800px] h-20 bg-pencil-light/10 flex items-center justify-center text-sm text-pencil-light tracking-widest border border-pencil/20 shadow-inner z-0"
