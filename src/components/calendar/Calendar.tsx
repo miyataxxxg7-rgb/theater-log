@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useTickets } from "@/hooks/useTickets";
 import { Ticket, TicketStatus, STATUS_CONFIG } from "@/types/ticket";
 import clsx from "clsx";
@@ -9,6 +9,9 @@ import clsx from "clsx";
 export function TicketCalendar() {
     const { tickets } = useTickets();
     const [currentDate, setCurrentDate] = useState(new Date());
+
+    // 🌟 ポップアップ用の状態（どの日付が押されたか）を記憶する機能を追加！
+    const [popupData, setPopupData] = useState<{ day: number, events: any[] } | null>(null);
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -65,7 +68,7 @@ export function TicketCalendar() {
     }, [firstDayOfWeek, daysInMonth]);
 
     return (
-        <div className="space-y-4 w-full max-w-2xl mx-auto">
+        <div className="space-y-4 w-full max-w-2xl mx-auto relative">
             <div className="flex items-center justify-between px-2">
                 <button onClick={goToPreviousMonth} className="p-2 hover:bg-black/5 rounded-full">
                     <ChevronLeft className="w-5 h-5 text-pencil" />
@@ -94,22 +97,24 @@ export function TicketCalendar() {
 
                         const events = getDateEvents(day);
                         return (
-                            <div key={day} className={clsx(
-                                "min-h-[70px] md:min-h-[90px] p-1 rounded-md border flex flex-col overflow-hidden transition-colors w-full min-w-0",
-                                isToday(day) ? "bg-pink-50 border-pink-200" : "bg-gray-50/30 border-gray-100 hover:bg-gray-50"
-                            )}>
+                            <div
+                                key={day}
+                                // 🌟 予定がある日をクリックしたらポップアップを出す！
+                                onClick={() => events.length > 0 && setPopupData({ day, events })}
+                                className={clsx(
+                                    "min-h-[70px] md:min-h-[90px] p-1 rounded-md border flex flex-col overflow-hidden transition-colors w-full min-w-0",
+                                    isToday(day) ? "bg-pink-50 border-pink-200" : "bg-gray-50/30 border-gray-100",
+                                    events.length > 0 ? "cursor-pointer hover:border-pink-300 hover:bg-white active:scale-95" : ""
+                                )}
+                            >
                                 <span className={clsx("text-[10px] md:text-xs mb-1 text-center shrink-0", isToday(day) ? "text-pink-600 font-bold" : "text-pencil")}>
                                     {day}
                                 </span>
 
-                                {/* 🌟 2段表示のイベントコンテナ */}
                                 <div className="flex flex-col gap-1 w-full overflow-y-auto flex-1 pb-1" style={{ scrollbarWidth: 'none' }}>
                                     {events.map((event, i) => {
-                                        let icon = "";
-                                        let textColor = "text-pencil";
-                                        let label = "";
+                                        let icon = ""; let textColor = "text-pencil"; let label = "";
 
-                                        // アイコンとラベルの設定
                                         if (event.type === 'applying') { icon = "🎫"; textColor = "text-blue-500"; label = "申込"; }
                                         else if (event.type === 'result') { icon = "📢"; textColor = "text-pink-500"; label = "当落"; }
                                         else if (event.type === 'payment') { icon = "⚠️"; textColor = "text-red-500"; label = "入金"; }
@@ -120,15 +125,13 @@ export function TicketCalendar() {
                                             <div key={`${event.ticket.id}-${event.type}-${i}`}
                                                 className="flex flex-col w-full overflow-hidden rounded-[4px] bg-white px-1 py-0.5 shadow-sm border border-pencil/10"
                                             >
-                                                {/* 1段目：アイコンとラベル（色付き） */}
                                                 <div className="flex items-center w-full gap-0.5">
-                                                    <span className="flex-shrink-0 text-[10px] leading-none">{icon}</span>
-                                                    <span className={clsx("font-bold text-[9px] md:text-[10px] truncate leading-none", textColor)}>
+                                                    <span className="flex-shrink-0 text-[9px] md:text-[10px] leading-none">{icon}</span>
+                                                    <span className={clsx("font-bold text-[8px] md:text-[9px] truncate leading-none whitespace-nowrap", textColor)}>
                                                         {label}
                                                     </span>
                                                 </div>
-                                                {/* 2段目：公演名 */}
-                                                <span className="truncate w-full text-[8px] md:text-[9px] text-pencil-light font-medium mt-0.5">
+                                                <span className="truncate w-full text-[7px] md:text-[8px] text-pencil-light font-medium mt-0.5 whitespace-nowrap">
                                                     {event.ticket.title}
                                                 </span>
                                             </div>
@@ -152,6 +155,66 @@ export function TicketCalendar() {
                     );
                 })}
             </div>
+
+            {/* 🌟 ここからがポップアップ（モーダル）の魔法です！ */}
+            {popupData && (
+                <div
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in zoom-in-95 duration-200"
+                    onClick={() => setPopupData(null)}
+                >
+                    <div
+                        className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col max-h-[80vh]"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="bg-gray-50 px-4 py-3 border-b flex justify-between items-center shrink-0">
+                            <h3 className="font-bold text-pencil text-sm md:text-base">
+                                {year}年{month + 1}月{popupData.day}日の予定
+                            </h3>
+                            <button onClick={() => setPopupData(null)} className="p-1 hover:bg-black/10 rounded-full transition-colors">
+                                <X className="w-5 h-5 text-pencil-light" />
+                            </button>
+                        </div>
+
+                        <div className="p-4 overflow-y-auto space-y-3 flex-1">
+                            {popupData.events.map((event, i) => {
+                                let icon = ""; let label = ""; let colorClass = ""; let timeStr = "";
+
+                                if (event.type === 'applying') { icon = "🎫"; label = "申込期間"; colorClass = "text-blue-500"; }
+                                else if (event.type === 'result') { icon = "📢"; label = "当落発表"; colorClass = "text-pink-500"; }
+                                else if (event.type === 'payment') {
+                                    icon = "⚠️"; label = "入金締切"; colorClass = "text-red-500";
+                                    if (event.ticket.dates.paymentDeadline) timeStr = event.ticket.dates.paymentDeadline.split('T')[1]?.substring(0, 5) || "";
+                                }
+                                else if (event.type === 'issue') { icon = "🏪"; label = "発券開始"; colorClass = "text-green-600"; }
+                                else if (event.type === 'show') {
+                                    icon = "⭐"; label = "公演日時"; colorClass = "text-yellow-600";
+                                    if (event.ticket.dates.showDate) timeStr = event.ticket.dates.showDate.split('T')[1]?.substring(0, 5) || "";
+                                }
+
+                                return (
+                                    <div key={i} className="flex gap-3 items-start border-b border-pencil/5 pb-3 last:border-0 last:pb-0">
+                                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-xl shadow-sm border border-pencil/10">
+                                            {icon}
+                                        </div>
+                                        <div className="flex-1 min-w-0 pt-0.5">
+                                            <div className="flex items-center gap-2">
+                                                <span className={clsx("text-xs font-bold px-1.5 py-0.5 rounded-sm bg-opacity-10", colorClass)} style={{ backgroundColor: `currentColor` }}>
+                                                    <span style={{ filter: 'brightness(0.7)' }}>{label}</span>
+                                                </span>
+                                                {timeStr && <span className="text-xs font-bold text-pencil-light">{timeStr}</span>}
+                                            </div>
+                                            <p className="font-bold text-sm text-pencil mt-1.5 leading-tight">{event.ticket.title}</p>
+                                            {event.ticket.venue && (
+                                                <p className="text-xs text-pencil-light mt-1 truncate">📍 {event.ticket.venue}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
