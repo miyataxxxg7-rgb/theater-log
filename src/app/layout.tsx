@@ -26,8 +26,7 @@ export default function RootLayout({
           <nav className="fixed bottom-0 w-full max-w-md bg-white border-t border-gray-200 z-10">
             <div className="flex justify-around items-center h-16 pb-2">
 
-              {/* 🌟 座席表の行き先を、個別の劇場ページに変更しました！ */}
-              <Link href="/theater/umeda" className="flex flex-col items-center text-gray-600 hover:text-purple-600">
+              <Link href="/theater" className="flex flex-col items-center text-gray-600 hover:text-purple-600">
                 <Armchair size={24} />
                 <span className="text-[10px] mt-1">座席表</span>
               </Link>
@@ -36,10 +35,13 @@ export default function RootLayout({
                 <BookOpen size={24} />
                 <span className="text-[10px] mt-1">ログ</span>
               </Link>
-              <Link href="/theater" className="flex flex-col items-center text-gray-600 hover:text-purple-600">
+
+              {/* 🌟 劇場の行き先を、未来の便利ページ「/venues」に変更しました！ */}
+              <Link href="/venues" className="flex flex-col items-center text-gray-600 hover:text-purple-600">
                 <Building2 size={24} />
                 <span className="text-[10px] mt-1">劇場</span>
               </Link>
+
               <Link href="/calendar" className="flex flex-col items-center text-gray-600 hover:text-purple-600">
                 <Calendar size={24} />
                 <span className="text-[10px] mt-1">予定</span>
