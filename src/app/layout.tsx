@@ -19,21 +19,19 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={`${inter.className} bg-gray-100 text-gray-900`}>
-        {/* 🌟 pt-14（上の隙間）を消して綺麗に詰めました！ */}
         <div className="max-w-md mx-auto bg-white min-h-screen shadow-lg relative pb-20">
 
-          {/* ✂️ ここにあった自己主張の激しいトップヘッダーを削除しました！ */}
-
-          {/* メインコンテンツ（各画面がここに入ります） */}
           <main className="p-4">{children}</main>
 
-          {/* 下部ナビゲーション（アイコンメニュー）は絶対残します！ */}
           <nav className="fixed bottom-0 w-full max-w-md bg-white border-t border-gray-200 z-10">
             <div className="flex justify-around items-center h-16 pb-2">
-              <Link href="/theater" className="flex flex-col items-center text-gray-600 hover:text-purple-600">
+
+              {/* 🌟 座席表の行き先を、個別の劇場ページに変更しました！ */}
+              <Link href="/theater/umeda" className="flex flex-col items-center text-gray-600 hover:text-purple-600">
                 <Armchair size={24} />
                 <span className="text-[10px] mt-1">座席表</span>
               </Link>
+
               <Link href="/logs" className="flex flex-col items-center text-gray-600 hover:text-purple-600">
                 <BookOpen size={24} />
                 <span className="text-[10px] mt-1">ログ</span>
