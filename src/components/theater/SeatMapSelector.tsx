@@ -10,42 +10,51 @@ import { SeatMap3F } from "./SeatMap3F";
 import { ArrowLeft } from "lucide-react";
 
 export function SeatMapSelector() {
-    // 🌟 ここを「null（空っぽ）」に戻すことで、最初は必ず「劇場選択（1枚目）」画面が出ます！
+    // 🌟 ここを「null」にすることで、絶対に「劇場を選択」の画面からスタートします！
     const [selectedTheater, setSelectedTheater] = useState<Theater | null>(null);
-
     const [selectedFloor, setSelectedFloor] = useState<1 | 2 | 3 | null>(null);
 
-    // 劇場選択に戻る
+    // 劇場選択（一番最初の画面）に戻る
     const handleBackToTheaters = () => {
         setSelectedTheater(null);
         setSelectedFloor(null);
     };
 
-    // 階数選択に戻る
+    // 階数選択（真ん中の画面）に戻る
     const handleBackToFloors = () => {
         setSelectedFloor(null);
     };
 
-    // 1. 劇場未選択 → 劇場リスト表示
+    // 1. 劇場未選択 → 🌟「劇場を選択」画面を表示！（MIさんが見たい画面！）
     if (!selectedTheater) {
         return <TheaterSelector onSelect={setSelectedTheater} />;
     }
 
-    // 2. 階数未選択 → 階数選択表示
+    // 2. 階数未選択 → 「階数を選択」画面を表示
     if (!selectedFloor) {
         return (
-            <FloorSelector
-                theaterName={selectedTheater.name}
-                onSelect={setSelectedFloor}
-                onBack={handleBackToTheaters}
-            />
+            <div className="space-y-4 pt-2 pb-12 animate-in fade-in duration-300">
+                {/* 🌟 ちゃんと劇場選択に戻れるボタンも完備！ */}
+                <button
+                    onClick={handleBackToTheaters}
+                    className="flex items-center gap-2 text-pencil-light hover:text-oshi transition-colors"
+                >
+                    <ArrowLeft size={20} />
+                    <span className="text-sm font-bold">劇場選択に戻る</span>
+                </button>
+                <FloorSelector
+                    theaterName={selectedTheater.name}
+                    onSelect={setSelectedFloor}
+                    onBack={handleBackToTheaters}
+                />
+            </div>
         );
     }
 
-    // 3. 両方選択済み → 座席表表示
+    // 3. 両方選択済み → 「座席表」画面を表示
     return (
-        <div className="space-y-4 pt-2 pb-12">
-            <div className="flex items-center justify-between">
+        <div className="space-y-4 pt-2 pb-12 animate-in fade-in duration-300">
+            <div className="flex items-center justify-between px-2">
                 <button
                     onClick={handleBackToFloors}
                     className="flex items-center gap-2 text-pencil-light hover:text-oshi transition-colors"
@@ -53,7 +62,7 @@ export function SeatMapSelector() {
                     <ArrowLeft size={20} />
                     <span className="text-sm font-bold">階数選択に戻る</span>
                 </button>
-                <div className="text-xs font-bold text-pencil-light bg-pencil-light/10 px-3 py-1.5 rounded-full">
+                <div className="text-[10px] font-bold text-pencil-light bg-pencil-light/10 px-3 py-1.5 rounded-full">
                     {selectedTheater.name} / {selectedFloor}階席
                 </div>
             </div>
