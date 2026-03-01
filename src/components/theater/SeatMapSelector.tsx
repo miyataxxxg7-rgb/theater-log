@@ -10,7 +10,9 @@ import { SeatMap3F } from "./SeatMap3F";
 import { ArrowLeft } from "lucide-react";
 
 export function SeatMapSelector() {
+    // 🌟 ここを「null（空っぽ）」に戻すことで、最初は必ず「劇場選択（1枚目）」画面が出ます！
     const [selectedTheater, setSelectedTheater] = useState<Theater | null>(null);
+
     const [selectedFloor, setSelectedFloor] = useState<1 | 2 | 3 | null>(null);
 
     // 劇場選択に戻る
@@ -42,16 +44,16 @@ export function SeatMapSelector() {
 
     // 3. 両方選択済み → 座席表表示
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 pt-2 pb-12">
             <div className="flex items-center justify-between">
                 <button
                     onClick={handleBackToFloors}
                     className="flex items-center gap-2 text-pencil-light hover:text-oshi transition-colors"
                 >
                     <ArrowLeft size={20} />
-                    <span className="text-sm">階数選択に戻る</span>
+                    <span className="text-sm font-bold">階数選択に戻る</span>
                 </button>
-                <div className="text-sm text-pencil-light">
+                <div className="text-xs font-bold text-pencil-light bg-pencil-light/10 px-3 py-1.5 rounded-full">
                     {selectedTheater.name} / {selectedFloor}階席
                 </div>
             </div>
@@ -64,7 +66,7 @@ export function SeatMapSelector() {
                 <SeatMap3F />
             ) : (
                 <div className="bg-white/50 p-8 rounded-lg border border-pencil/20 text-center">
-                    <p className="text-pencil-light">
+                    <p className="text-pencil-light font-bold">
                         {selectedFloor}階席は準備中です
                     </p>
                 </div>
